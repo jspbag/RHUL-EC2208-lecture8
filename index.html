@@ -630,7 +630,7 @@ GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^4 \beta_j GDPGR_{t-j} \\
 ## L(ts(term.spread.train), 4) |        0.35 | 0.54 | [-0.72, 1.42] |      0.65 | 150 | 0.515</code></pre>
 </section><section id="step-ahead-adl44-forecast-of-us-gdp-growth" class="slide level2">
 <h2>1-step ahead ADL(4,4)-forecast of US GDP growth</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2003:Q1</span></span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2001:Q1</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a>T &lt;-<span class="kw">length</span>(GDPGrowth.train) <span class="co"># Length of observed series</span></span>
 <span id="cb7-3"><a href="#cb7-3"></a>fcast.ADL44 &lt;-<span class="st"> </span>ADL44.dynlm<span class="op">$</span>coefficients <span class="op">%*%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, GDPGrowth.train[T], GDPGrowth.train[(T<span class="dv">-1</span>)], GDPGrowth.train[(T<span class="dv">-2</span>)], GDPGrowth.train[(T<span class="dv">-3</span>)],</span>
 <span id="cb7-4"><a href="#cb7-4"></a>                                                 term.spread.train[T], term.spread.train[(T<span class="dv">-1</span>)], term.spread.train[(T<span class="dv">-2</span>)], term.spread.train[(T<span class="dv">-3</span>)])</span>
@@ -638,10 +638,10 @@ GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^4 \beta_j GDPGR_{t-j} \\
 <pre><code>##          [,1]
 ## [1,] 1.378923</code></pre>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Forecast error</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>fcast.ADL44.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2003&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL44</span>
+<span id="cb9-2"><a href="#cb9-2"></a>fcast.ADL44.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2001&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL44</span>
 <span id="cb9-3"><a href="#cb9-3"></a>fcast.ADL44.error <span class="co"># Print to console</span></span></code></pre></div>
 <pre><code>##           [,1]
-## [1,] 0.6425715</code></pre>
+## [1,] -2.525972</code></pre>
 </section><section id="step-ahead-adl44-forecast-of-us-gdp-growth-1" class="slide level2">
 <h2>1-step ahead ADL(4,4)-forecast of US GDP growth</h2>
 <p><img src="index_files/figure-revealjs/unnamed-chunk-10-1.png" width="70%" /></p>
@@ -671,16 +671,16 @@ GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^2 \beta_j GDPGR_{t-j} \\
 ## L(ts(term.spread.train))  |        0.66 | 0.24 | [ 0.19, 1.13] |      2.76 | 157 | 0.006</code></pre>
 </section><section id="step-ahead-adl21-forecast-of-us-gdp-growth" class="slide level2">
 <h2>1-step ahead ADL(2,1)-forecast of US GDP growth</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2003:Q1</span></span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2001:Q1</span></span>
 <span id="cb13-2"><a href="#cb13-2"></a>fcast.ADL21 &lt;-<span class="st"> </span>ADL21.dynlm<span class="op">$</span>coefficients <span class="op">%*%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, GDPGrowth.train[T], GDPGrowth.train[(T<span class="dv">-1</span>)], term.spread.train[T])</span>
 <span id="cb13-3"><a href="#cb13-3"></a>fcast.ADL21 <span class="co"># Print to console</span></span></code></pre></div>
 <pre><code>##          [,1]
 ## [1,] 1.533642</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Forecast error</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a>fcast.ADL21.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2003&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL21</span>
+<span id="cb15-2"><a href="#cb15-2"></a>fcast.ADL21.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2001&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL21</span>
 <span id="cb15-3"><a href="#cb15-3"></a>fcast.ADL21.error <span class="co"># Print to console</span></span></code></pre></div>
 <pre><code>##           [,1]
-## [1,] 0.4878531</code></pre>
+## [1,] -2.680691</code></pre>
 </section><section id="step-ahead-adl21-forecast-of-us-gdp-growth-1" class="slide level2">
 <h2>1-step ahead ADL(2,1)-forecast of US GDP growth</h2>
 <p><img src="index_files/figure-revealjs/unnamed-chunk-13-1.png" width="70%" /></p>

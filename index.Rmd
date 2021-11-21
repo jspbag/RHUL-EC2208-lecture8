@@ -224,13 +224,13 @@ parameters(ADL44.dynlm, robust = TRUE, vcov_type = "HC1")
 ## 1-step ahead ADL(4,4)-forecast of US GDP growth
 
 ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
-# Produce one-step ahead forecast of GDP growth for 2003:Q1
+# Produce one-step ahead forecast of GDP growth for 2001:Q1
 T <-length(GDPGrowth.train) # Length of observed series
 fcast.ADL44 <- ADL44.dynlm$coefficients %*% c(1, GDPGrowth.train[T], GDPGrowth.train[(T-1)], GDPGrowth.train[(T-2)], GDPGrowth.train[(T-3)],
                                                  term.spread.train[T], term.spread.train[(T-1)], term.spread.train[(T-2)], term.spread.train[(T-3)])
 fcast.ADL44 # Print to console
 # Forecast error
-fcast.ADL44.error <- as.numeric(GDPGrowth["2003"][1]) - fcast.ADL44
+fcast.ADL44.error <- as.numeric(GDPGrowth["2001"][1]) - fcast.ADL44
 fcast.ADL44.error # Print to console
 ```
 
@@ -294,11 +294,11 @@ parameters(ADL21.dynlm, robust = TRUE, vcov_type = "HC1")
 ## 1-step ahead ADL(2,1)-forecast of US GDP growth
 
 ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
-# Produce one-step ahead forecast of GDP growth for 2003:Q1
+# Produce one-step ahead forecast of GDP growth for 2001:Q1
 fcast.ADL21 <- ADL21.dynlm$coefficients %*% c(1, GDPGrowth.train[T], GDPGrowth.train[(T-1)], term.spread.train[T])
 fcast.ADL21 # Print to console
 # Forecast error
-fcast.ADL21.error <- as.numeric(GDPGrowth["2003"][1]) - fcast.ADL21
+fcast.ADL21.error <- as.numeric(GDPGrowth["2001"][1]) - fcast.ADL21
 fcast.ADL21.error # Print to console
 ```
 
