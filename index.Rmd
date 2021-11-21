@@ -1,0 +1,351 @@
+---
+pagetitle: ADL forecasts
+output: 
+  revealjs::revealjs_presentation:
+    incremental: false
+    theme: solarized
+    self_contained: false
+    reveal_plugins: ["notes","chalkboard"]
+    # reveal_plugins: ["menu"]
+    highlight: pygments
+    center: true
+    transition: none
+    background_transition: none 
+    reveal_options:
+      # chalkboard:
+      #   theme: whiteboard
+      #   toggleNotesButton: true
+      #   toggleChalkboardButton: true
+      menu:
+        numbers: true
+      slideNumber: true
+      previewLinks: false
+    fig_caption: true
+    pandoc_args:
+    - --indented-code-classes
+    - lineNumbers
+    css: mystyle.css
+    
+--- 
+
+<section>
+
+<h1>Autoregressive Distributed Lag Forecasting</h1>
+
+Based on Stock and Watson, ch. 15
+
+<br>
+
+<h2>[Jesper Bagger](mailto:jesper.bagger@rhul.ac.uk)</h2>
+
+<h3>EC2208 | Royal Holloway | 2021/22</h3>
+
+</section>
+
+```{r results='asis', echo=FALSE, include=FALSE}
+library(AER) # load Applied Econometrics with R library
+library(parameters) # Load parameters library for robust SE computation
+library(quantmod) # Load quantmod library for time series analysis
+library(readxl) # Load readxl to load spreadsheet data
+library(stats) # Load stats to compute acf functions
+library(scales) # Load scales to be used in plots
+```
+
+# Autoregressive Distributed Lag models
+
+## Additional predictors 
+
+- Autoregressive forecasts of $Y$ use the immediate past values of $Y$ itself; often, economic theory suggests *another* variable $X$ may help forecast $Y$ as well.
+
+- Autoregressive Distributed Lag models adds additional predictors to the forecasting model
+
+  - Autoregressive due to lags of dependent variable
+  
+  - Also includes a *lag distribution* of additional predictor $X$
+  
+## The Autoregressive Distributed Lag (ADL) model
+
+- Consider two time series $Y_t$ and $X_t$, and consider:
+
+  \begin{multline*}
+  Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_p Y_{t-p} \\
+  + \delta_1 X_{t-1} + \delta_2 X_{t-2} + \ldots + \delta_q X_{t-q} + u_t,
+  \end{multline*}
+  
+  where $\beta_0,\beta_1, \ldots, \beta_p,\delta_1,\delta_2,\ldots,\delta_q$ are coefficients, and $u_t$ is the error term with the property:
+  
+  $$E(u_t|Y_{t-1},Y_{t-2},\ldots,X_{t-1},X_{t-2},\ldots) = 0$$
+  
+- This model is an $ADL(p,q)$-model
+
+- The $ADL(p,q)$-model is a multiple regression model; estimation discussed in pre-recorded video
+
+# GDP Growth and the Term Spread
+
+## US GDP growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+# load US macroeconomic data
+usmac_qt <- read_xlsx("us_macro_quarterly.xlsx", sheet = 1, col_types = c("text", rep("numeric", 9)))
+# Fix format of date
+usmac_qt$...1 <- as.yearqtr(usmac_qt$...1, format = "%Y:0%q")
+# Relabel column names in dataframe
+colnames(usmac_qt) <- c("Date", "GDPC96", "JAPAN_IP", "PCECTPI", 
+                        "GS10", "GS1", "TB3MS", "UNRATE", "EXUSUK", "CPIAUCSL")
+# GDP series as xts object
+GDP <- xts(usmac_qt$GDPC96, usmac_qt$Date)["1960::2013"]
+# GDP growth series as xts object
+GDPGrowth <- xts(400 * log(GDP/lag(GDP)))
+ishort <- xts(usmac_qt$TB3MS, usmac_qt$Date)["1960::2013"] 
+ilong <- xts(usmac_qt$GS10, usmac_qt$Date)["1960::2013"] 
+term.spread <- ilong - ishort
+# Training data
+GDPGrowth.train <- na.omit(GDPGrowth["1960::2000"]) 
+ishort.train <- na.omit(ishort["1960-04/2000-12"]) 
+ilong.train <- na.omit(ilong["1960-04::2000-12"])
+term.spread.train <- na.omit(term.spread["1960-04::2000-12"])
+```
+
+## US GDP growth
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US quarterly GDP time series
+plot(as.zoo(GDPGrowth),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Growth Rates",
+     xlab = "Date",
+     main = "U.S. Real GDP Growth Rates")
+abline(v = 2000.75, lty = "dashed")
+lines(as.zoo(GDPGrowth.train), lwd = 2, col = "blue")
+```
+
+## US short and long interest rates
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US short and long term interest rates
+plot(as.zoo(ishort),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Percent per annum",
+     xlab = "Date",
+     main = "U.S. short and long interes rates")
+abline(v = 2000.75, lty = "dashed")
+lines(as.zoo(ilong), lwd = 1, col = "red",lty = "dashed")
+lines(as.zoo(ishort.train), lwd = 2, col = "blue")
+lines(as.zoo(ilong.train), lwd = 2, col = "red")
+legend("topright", inset = 0.02, c("3-mth interest rate", "3-mth interest rate (training)", "10-year interest rate", "10-year interest rate (training)"),col=c("blue","blue","red","red"),lty=c(2,1,2,1),lwd = c(1,2,1,2))
+```
+
+## US term spread
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US term spread
+plot(as.zoo(term.spread),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Percent per annum",
+     xlab = "Date",
+     main = "U.S. term spread")
+abline(v = 2000.75, lty = "dashed")
+abline(h = 0, lwd = 1)
+lines(as.zoo(term.spread.train), lwd = 2, col = "blue")
+```
+
+## US GDP growth and term spread
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US GDP growth and term spread
+plot(as.zoo(GDPGrowth),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Percent per annum",
+     xlab = "Date",
+     main = "U.S. Real GDP Growth Rates and the Term Spread")
+abline(v = 2000.75, lty = "dashed")
+lines(as.zoo(GDPGrowth.train), lwd = 2, col = "blue")
+lines(as.zoo(term.spread), col = "red", lwd = 1, lty = "dashed")
+lines(as.zoo(term.spread.train), lwd = 2, col = "red")
+abline(h = 0, lwd = 1)
+# define function that transform years to class 'yearqtr'
+YToYQTR <- function(years) {
+        return(
+                sort(as.yearqtr(sapply(years, paste, c("Q1", "Q2", "Q3", "Q4"))))
+        )
+}
+# recessions
+recessions <- YToYQTR(c(1961:1962, 1970, 1974:1975, 1980:1982, 1990:1991, 2001, 2007:2008))
+# add color shading for recessions
+xblocks(time(as.zoo(ishort)), 
+        c(time(ishort) %in% recessions), 
+        col = alpha("gray", alpha = 0.3))
+legend("topright", inset = 0.02, c("GDP growth", "GDP growth (training)", "Term spread", "Term spread (training)"),col=c("blue","blue","red","red"),lty=c(2,1,2,1),lwd = c(1,2,1,2))
+```
+
+# ADL-forecasting of US GDP growth
+
+## ADL(4,4)-model for US GPD growth
+
+- Consider the following $ADL(4,4)$-model for US GPD growth:
+
+  \begin{multline*}
+  GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^4 \beta_j GDPGR_{t-j} \\ 
+  + \textstyle \sum_{k=1}^4 \delta_j TSPR_{t-k}  + u_t
+  \end{multline*}
+
+- Estimate using $(GDPGR_t,TSPR_t; t = 1,2,\ldots,T)$, make a 1-step ahead forecast:
+
+  \begin{multline*}
+  \widehat{GDPGR}_{T+1|T} = \hat{\beta}_0 + \textstyle \sum_{j=0}^3 \hat{\beta}_j GDPGR_{T-j} \\ 
+  + \textstyle \sum_{k=0}^3 \hat{\delta}_j TSPR_{T-k} 
+  \end{multline*}
+
+## ADL(4,4)-model for US GPD growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+library(dynlm) # Load dynlm to estimate higher-order autoregressions
+ADL44.dynlm <- dynlm(ts(GDPGrowth.train) ~ L(ts(GDPGrowth.train)) + L(ts(GDPGrowth.train), 2) + 
+                                           L(ts(GDPGrowth.train), 3) + L(ts(GDPGrowth.train), 4) + 
+                                           L(ts(term.spread.train)) + L(ts(term.spread.train), 2) +
+                                           L(ts(term.spread.train), 3) + L(ts(term.spread.train), 4)) 
+```
+
+## ADL(4,4)-model for US GPD growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Output w/ robust standard errors
+parameters(ADL44.dynlm, robust = TRUE, vcov_type = "HC1")
+```
+
+## 1-step ahead ADL(4,4)-forecast of US GDP growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Produce one-step ahead forecast of GDP growth for 2003:Q1
+T <-length(GDPGrowth.train) # Length of observed series
+fcast.ADL44 <- ADL44.dynlm$coefficients %*% c(1, GDPGrowth.train[T], GDPGrowth.train[(T-1)], GDPGrowth.train[(T-2)], GDPGrowth.train[(T-3)],
+                                                 term.spread.train[T], term.spread.train[(T-1)], term.spread.train[(T-2)], term.spread.train[(T-3)])
+fcast.ADL44 # Print to console
+# Forecast error
+fcast.ADL44.error <- as.numeric(GDPGrowth["2003"][1]) - fcast.ADL44
+fcast.ADL44.error # Print to console
+```
+
+## 1-step ahead ADL(4,4)-forecast of US GDP growth
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US GDP growth and term spread w/ forecasts
+plot(as.zoo(GDPGrowth),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Percent per annum",
+     xlab = "Date",
+     main = "U.S. Real GDP Growth Rates and the Term Spread")
+abline(v = 2000.75, lty = "dashed")
+lines(as.zoo(GDPGrowth.train), lwd = 2, col = "blue")
+lines(as.zoo(term.spread), col = "red", lwd = 1, lty = "dashed")
+lines(as.zoo(term.spread.train), lwd = 2, col = "red")
+abline(h = 0, lwd = 1)
+# define function that transform years to class 'yearqtr'
+YToYQTR <- function(years) {
+        return(
+                sort(as.yearqtr(sapply(years, paste, c("Q1", "Q2", "Q3", "Q4"))))
+        )
+}
+# recessions
+recessions <- YToYQTR(c(1961:1962, 1970, 1974:1975, 1980:1982, 1990:1991, 2001, 2007:2008))
+# add color shading for recessions
+xblocks(time(as.zoo(ishort)), 
+        c(time(ishort) %in% recessions), 
+        col = alpha("gray", alpha = 0.3))
+points(2001,fcast.ADL44, cex = 1, col ="green")
+points(2001,GDPGrowth["2001"][1], cex = 1, col ="blue")
+legend("topright", inset = 0.02, c("GDP growth", "GDP growth (training)", "Term spread", "Term spread (training)","Realized growth (2001:Q1)","ADL(4,4) forecasted growth (2001:Q1)"),col=c("blue","blue","red","red","blue","green"),lty=c(2,1,2,1,NA,NA),lwd = c(1,2,1,2,NA,NA),pch=c(NA,NA,NA,NA,1,1))
+```
+
+
+## ADL(2,1)-model for US GPD growth
+
+- Consider the following $ADL(2,1)$-model for US GPD growth:
+
+  \begin{multline*}
+  GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^2 \beta_j GDPGR_{t-j} \\ 
+  + \delta_1 TSPR_{t-1}  + u_t
+  \end{multline*}
+
+- Estimate using $(GDPGR_t,TSPR_t; t = 1,2,\ldots,T)$, make a 1-step ahead forecast:
+
+  \begin{multline*}
+  \widehat{GDPGR}_{T+1|T} = \hat{\beta}_0 + \textstyle \sum_{j=0}^1 \hat{\beta}_j GDPGR_{T-j} \\ 
+  + \hat{\delta}_1 TSPR_{T} 
+  \end{multline*}
+
+## ADL(2,1)-model for US GPD growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+ADL21.dynlm <- dynlm(ts(GDPGrowth.train) ~ L(ts(GDPGrowth.train)) + L(ts(GDPGrowth.train), 2) + L(ts(term.spread.train))) 
+parameters(ADL21.dynlm, robust = TRUE, vcov_type = "HC1")
+```
+
+## 1-step ahead ADL(2,1)-forecast of US GDP growth
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Produce one-step ahead forecast of GDP growth for 2003:Q1
+fcast.ADL21 <- ADL21.dynlm$coefficients %*% c(1, GDPGrowth.train[T], GDPGrowth.train[(T-1)], term.spread.train[T])
+fcast.ADL21 # Print to console
+# Forecast error
+fcast.ADL21.error <- as.numeric(GDPGrowth["2003"][1]) - fcast.ADL21
+fcast.ADL21.error # Print to console
+```
+
+## 1-step ahead ADL(2,1)-forecast of US GDP growth
+
+```{r echo=FALSE, error=FALSE, warning=FALSE, out.width = "70%"}
+# Plot US GDP growth and term spread
+plot(as.zoo(GDPGrowth),
+     col = "blue",
+     lwd = 1,
+     lty = "dashed",
+     ylab = "Percent per annum",
+     xlab = "Date",
+     main = "U.S. Real GDP Growth Rates and the Term Spread")
+abline(v = 2000.75, lty = "dashed")
+lines(as.zoo(GDPGrowth.train), lwd = 2, col = "blue")
+lines(as.zoo(term.spread), col = "red", lwd = 1, lty = "dashed")
+lines(as.zoo(term.spread.train), lwd = 2, col = "red")
+abline(h = 0, lwd = 1)
+# define function that transform years to class 'yearqtr'
+YToYQTR <- function(years) {
+        return(
+                sort(as.yearqtr(sapply(years, paste, c("Q1", "Q2", "Q3", "Q4"))))
+        )
+}
+# recessions
+recessions <- YToYQTR(c(1961:1962, 1970, 1974:1975, 1980:1982, 1990:1991, 2001, 2007:2008))
+# add color shading for recessions
+xblocks(time(as.zoo(ishort)),
+        c(time(ishort) %in% recessions),
+        col = alpha("gray", alpha = 0.3))
+points(2001,fcast.ADL44, cex = 1, col ="green")
+points(2001,fcast.ADL21, cex = 1, col ="orange")
+points(2001,GDPGrowth["2001"][1], cex = 1, col ="blue")
+legend("topright", inset = 0.02, c("GDP growth", "GDP growth (training)", "Term spread", "Term spread (training)","Realized growth (2001:Q1)","ADL(4,4) forecasted growth (2001:Q1)","ADL(2,1) forecasted growth (2001:Q1)"),col=c("blue","blue","red","red","blue","green","orange"),lty=c(2,1,2,1,NA,NA,NA),lwd = c(1,2,1,2,NA,NA,NA),pch=c(NA,NA,NA,NA,1,1,1))
+```
+
+
+# Summary
+
+## Summary
+
+- $ADL$-models forecast $Y$ using the immediate past values of $Y$ itself as well as past values of other predictors.
+
+- Univariate autoregression ($AR$-models) are special cases of the $ADL$-models.
+
+- ADL-models can be estimated by OLS (see pre-recorded video for assumptions required for consistent estimation)
+
+- We can estimate $ADL$-models in R and use them for forecasting
+

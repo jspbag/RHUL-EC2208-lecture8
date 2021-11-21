@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>ADL forecasts</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/theme/solarized.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="mystyle.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="index_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="index_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section class="slide level2">
+
+<section>
+<h1>
+Autoregressive Distributed Lag Forecasting
+</h1>
+<p>Based on Stock and Watson, ch. 15</p>
+<p><br></p>
+<h2>
+<a href="mailto:jesper.bagger@rhul.ac.uk">Jesper Bagger</a>
+</h2>
+<h3>
+EC2208 | Royal Holloway | 2021/22
+</h3>
+</section>
+</section>
+<section><section id="autoregressive-distributed-lag-models" class="title-slide slide level1"><h1>Autoregressive Distributed Lag models</h1></section><section id="additional-predictors" class="slide level2">
+<h2>Additional predictors</h2>
+<ul>
+<li><p>Autoregressive forecasts of <span class="math inline">\(Y\)</span> use the immediate past values of <span class="math inline">\(Y\)</span> itself; often, economic theory suggests <em>another</em> variable <span class="math inline">\(X\)</span> may help forecast <span class="math inline">\(Y\)</span> as well.</p></li>
+<li><p>Autoregressive Distributed Lag models adds additional predictors to the forecasting model</p>
+<ul>
+<li><p>Autoregressive due to lags of dependent variable</p></li>
+<li><p>Also includes a <em>lag distribution</em> of additional predictor <span class="math inline">\(X\)</span></p></li>
+</ul></li>
+</ul>
+</section><section id="the-autoregressive-distributed-lag-adl-model" class="slide level2">
+<h2>The Autoregressive Distributed Lag (ADL) model</h2>
+<ul>
+<li><p>Consider two time series <span class="math inline">\(Y_t\)</span> and <span class="math inline">\(X_t\)</span>, and consider:</p>
+<p><span class="math display">\[\begin{multline*}
+Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_p Y_{t-p} \\
++ \delta_1 X_{t-1} + \delta_2 X_{t-2} + \ldots + \delta_q X_{t-q} + u_t,
+\end{multline*}\]</span></p>
+<p>where <span class="math inline">\(\beta_0,\beta_1, \ldots, \beta_p,\delta_1,\delta_2,\ldots,\delta_q\)</span> are coefficients, and <span class="math inline">\(u_t\)</span> is the error term with the property:</p>
+<p><span class="math display">\[E(u_t|Y_{t-1},Y_{t-2},\ldots,X_{t-1},X_{t-2},\ldots) = 0\]</span></p></li>
+<li><p>This model is an <span class="math inline">\(ADL(p,q)\)</span>-model</p></li>
+<li><p>The <span class="math inline">\(ADL(p,q)\)</span>-model is a multiple regression model; estimation discussed in pre-recorded video</p></li>
+</ul>
+</section></section>
+<section><section id="gdp-growth-and-the-term-spread" class="title-slide slide level1"><h1>GDP Growth and the Term Spread</h1></section><section id="us-gdp-growth" class="slide level2">
+<h2>US GDP growth</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># load US macroeconomic data</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>usmac_qt &lt;-<span class="st"> </span><span class="kw">read_xlsx</span>(<span class="st">&quot;us_macro_quarterly.xlsx&quot;</span>, <span class="dt">sheet =</span> <span class="dv">1</span>, <span class="dt">col_types =</span> <span class="kw">c</span>(<span class="st">&quot;text&quot;</span>, <span class="kw">rep</span>(<span class="st">&quot;numeric&quot;</span>, <span class="dv">9</span>)))</span></code></pre></div>
+<pre><code>## New names:
+## * `` -&gt; ...1</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Fix format of date</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>usmac_qt<span class="op">$</span>...<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">as.yearqtr</span>(usmac_qt<span class="op">$</span>...<span class="dv">1</span>, <span class="dt">format =</span> <span class="st">&quot;%Y:0%q&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># Relabel column names in dataframe</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">colnames</span>(usmac_qt) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Date&quot;</span>, <span class="st">&quot;GDPC96&quot;</span>, <span class="st">&quot;JAPAN_IP&quot;</span>, <span class="st">&quot;PCECTPI&quot;</span>, </span>
+<span id="cb3-5"><a href="#cb3-5"></a>                        <span class="st">&quot;GS10&quot;</span>, <span class="st">&quot;GS1&quot;</span>, <span class="st">&quot;TB3MS&quot;</span>, <span class="st">&quot;UNRATE&quot;</span>, <span class="st">&quot;EXUSUK&quot;</span>, <span class="st">&quot;CPIAUCSL&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># GDP series as xts object</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>GDP &lt;-<span class="st"> </span><span class="kw">xts</span>(usmac_qt<span class="op">$</span>GDPC96, usmac_qt<span class="op">$</span>Date)[<span class="st">&quot;1960::2013&quot;</span>]</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># GDP growth series as xts object</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>GDPGrowth &lt;-<span class="st"> </span><span class="kw">xts</span>(<span class="dv">400</span> <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(GDP<span class="op">/</span><span class="kw">lag</span>(GDP)))</span>
+<span id="cb3-10"><a href="#cb3-10"></a>ishort &lt;-<span class="st"> </span><span class="kw">xts</span>(usmac_qt<span class="op">$</span>TB3MS, usmac_qt<span class="op">$</span>Date)[<span class="st">&quot;1960::2013&quot;</span>] </span>
+<span id="cb3-11"><a href="#cb3-11"></a>ilong &lt;-<span class="st"> </span><span class="kw">xts</span>(usmac_qt<span class="op">$</span>GS10, usmac_qt<span class="op">$</span>Date)[<span class="st">&quot;1960::2013&quot;</span>] </span>
+<span id="cb3-12"><a href="#cb3-12"></a>term.spread &lt;-<span class="st"> </span>ilong <span class="op">-</span><span class="st"> </span>ishort</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Training data</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a>GDPGrowth.train &lt;-<span class="st"> </span><span class="kw">na.omit</span>(GDPGrowth[<span class="st">&quot;1960::2000&quot;</span>]) </span>
+<span id="cb3-15"><a href="#cb3-15"></a>ishort.train &lt;-<span class="st"> </span><span class="kw">na.omit</span>(ishort[<span class="st">&quot;1960-04/2000-12&quot;</span>]) </span>
+<span id="cb3-16"><a href="#cb3-16"></a>ilong.train &lt;-<span class="st"> </span><span class="kw">na.omit</span>(ilong[<span class="st">&quot;1960-04::2000-12&quot;</span>])</span>
+<span id="cb3-17"><a href="#cb3-17"></a>term.spread.train &lt;-<span class="st"> </span><span class="kw">na.omit</span>(term.spread[<span class="st">&quot;1960-04::2000-12&quot;</span>])</span></code></pre></div>
+</section><section id="us-gdp-growth-1" class="slide level2">
+<h2>US GDP growth</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-3-1.png" width="70%" /></p>
+</section><section id="us-short-and-long-interest-rates" class="slide level2">
+<h2>US short and long interest rates</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-4-1.png" width="70%" /></p>
+</section><section id="us-term-spread" class="slide level2">
+<h2>US term spread</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-5-1.png" width="70%" /></p>
+</section><section id="us-gdp-growth-and-term-spread" class="slide level2">
+<h2>US GDP growth and term spread</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-6-1.png" width="70%" /></p>
+</section></section>
+<section><section id="adl-forecasting-of-us-gdp-growth" class="title-slide slide level1"><h1>ADL-forecasting of US GDP growth</h1></section><section id="adl44-model-for-us-gpd-growth" class="slide level2">
+<h2>ADL(4,4)-model for US GPD growth</h2>
+<ul>
+<li><p>Consider the following <span class="math inline">\(ADL(4,4)\)</span>-model for US GPD growth:</p>
+<p><span class="math display">\[\begin{multline*}
+GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^4 \beta_j GDPGR_{t-j} \\ 
++ \textstyle \sum_{k=1}^4 \delta_j TSPR_{t-k}  + u_t
+\end{multline*}\]</span></p></li>
+<li><p>Estimate using <span class="math inline">\((GDPGR_t,TSPR_t; t = 1,2,\ldots,T)\)</span>, make a 1-step ahead forecast:</p>
+<p><span class="math display">\[\begin{multline*}
+\widehat{GDPGR}_{T+1|T} = \hat{\beta}_0 + \textstyle \sum_{j=0}^3 \hat{\beta}_j GDPGR_{T-j} \\ 
++ \textstyle \sum_{k=0}^3 \hat{\delta}_j TSPR_{T-k} 
+\end{multline*}\]</span></p></li>
+</ul>
+</section><section id="adl44-model-for-us-gpd-growth-1" class="slide level2">
+<h2>ADL(4,4)-model for US GPD growth</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(dynlm) <span class="co"># Load dynlm to estimate higher-order autoregressions</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>ADL44.dynlm &lt;-<span class="st"> </span><span class="kw">dynlm</span>(<span class="kw">ts</span>(GDPGrowth.train) <span class="op">~</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train)) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train), <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">                                           </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train), <span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train), <span class="dv">4</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="st">                                           </span><span class="kw">L</span>(<span class="kw">ts</span>(term.spread.train)) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(term.spread.train), <span class="dv">2</span>) <span class="op">+</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="st">                                           </span><span class="kw">L</span>(<span class="kw">ts</span>(term.spread.train), <span class="dv">3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(term.spread.train), <span class="dv">4</span>)) </span></code></pre></div>
+</section><section id="adl44-model-for-us-gpd-growth-2" class="slide level2">
+<h2>ADL(4,4)-model for US GPD growth</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Output w/ robust standard errors</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">parameters</span>(ADL44.dynlm, <span class="dt">robust =</span> <span class="ot">TRUE</span>, <span class="dt">vcov_type =</span> <span class="st">&quot;HC1&quot;</span>)</span></code></pre></div>
+<pre><code>## Parameter                   | Coefficient |   SE |        95% CI | Statistic |  df |     p
+## ------------------------------------------------------------------------------------------
+## (Intercept)                 |        1.32 | 0.61 | [ 0.11, 2.53] |      2.16 | 150 | 0.033
+## L(ts(GDPGrowth.train))      |        0.20 | 0.09 | [ 0.03, 0.37] |      2.35 | 150 | 0.020
+## L(ts(GDPGrowth.train), 2)   |        0.13 | 0.10 | [-0.07, 0.32] |      1.30 | 150 | 0.195
+## L(ts(GDPGrowth.train), 3)   |       -0.04 | 0.07 | [-0.18, 0.11] |     -0.49 | 150 | 0.628
+## L(ts(GDPGrowth.train), 4)   |        0.05 | 0.09 | [-0.13, 0.23] |      0.56 | 150 | 0.573
+## L(ts(term.spread.train))    |       -0.27 | 0.51 | [-1.27, 0.74] |     -0.52 | 150 | 0.604
+## L(ts(term.spread.train), 2) |        1.68 | 0.65 | [ 0.39, 2.97] |      2.57 | 150 | 0.011
+## L(ts(term.spread.train), 3) |       -1.03 | 0.76 | [-2.53, 0.47] |     -1.36 | 150 | 0.177
+## L(ts(term.spread.train), 4) |        0.35 | 0.54 | [-0.72, 1.42] |      0.65 | 150 | 0.515</code></pre>
+</section><section id="step-ahead-adl44-forecast-of-us-gdp-growth" class="slide level2">
+<h2>1-step ahead ADL(4,4)-forecast of US GDP growth</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2003:Q1</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>T &lt;-<span class="kw">length</span>(GDPGrowth.train) <span class="co"># Length of observed series</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>fcast.ADL44 &lt;-<span class="st"> </span>ADL44.dynlm<span class="op">$</span>coefficients <span class="op">%*%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, GDPGrowth.train[T], GDPGrowth.train[(T<span class="dv">-1</span>)], GDPGrowth.train[(T<span class="dv">-2</span>)], GDPGrowth.train[(T<span class="dv">-3</span>)],</span>
+<span id="cb7-4"><a href="#cb7-4"></a>                                                 term.spread.train[T], term.spread.train[(T<span class="dv">-1</span>)], term.spread.train[(T<span class="dv">-2</span>)], term.spread.train[(T<span class="dv">-3</span>)])</span>
+<span id="cb7-5"><a href="#cb7-5"></a>fcast.ADL44 <span class="co"># Print to console</span></span></code></pre></div>
+<pre><code>##          [,1]
+## [1,] 1.378923</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Forecast error</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>fcast.ADL44.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2003&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL44</span>
+<span id="cb9-3"><a href="#cb9-3"></a>fcast.ADL44.error <span class="co"># Print to console</span></span></code></pre></div>
+<pre><code>##           [,1]
+## [1,] 0.6425715</code></pre>
+</section><section id="step-ahead-adl44-forecast-of-us-gdp-growth-1" class="slide level2">
+<h2>1-step ahead ADL(4,4)-forecast of US GDP growth</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-10-1.png" width="70%" /></p>
+</section><section id="adl21-model-for-us-gpd-growth" class="slide level2">
+<h2>ADL(2,1)-model for US GPD growth</h2>
+<ul>
+<li><p>Consider the following <span class="math inline">\(ADL(2,1)\)</span>-model for US GPD growth:</p>
+<p><span class="math display">\[\begin{multline*}
+GDPGR_t = \beta_0 + \textstyle \sum_{j=1}^2 \beta_j GDPGR_{t-j} \\ 
++ \delta_1 TSPR_{t-1}  + u_t
+\end{multline*}\]</span></p></li>
+<li><p>Estimate using <span class="math inline">\((GDPGR_t,TSPR_t; t = 1,2,\ldots,T)\)</span>, make a 1-step ahead forecast:</p>
+<p><span class="math display">\[\begin{multline*}
+\widehat{GDPGR}_{T+1|T} = \hat{\beta}_0 + \textstyle \sum_{j=0}^1 \hat{\beta}_j GDPGR_{T-j} \\ 
++ \hat{\delta}_1 TSPR_{T} 
+\end{multline*}\]</span></p></li>
+</ul>
+</section><section id="adl21-model-for-us-gpd-growth-1" class="slide level2">
+<h2>ADL(2,1)-model for US GPD growth</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>ADL21.dynlm &lt;-<span class="st"> </span><span class="kw">dynlm</span>(<span class="kw">ts</span>(GDPGrowth.train) <span class="op">~</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train)) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(GDPGrowth.train), <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">L</span>(<span class="kw">ts</span>(term.spread.train))) </span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">parameters</span>(ADL21.dynlm, <span class="dt">robust =</span> <span class="ot">TRUE</span>, <span class="dt">vcov_type =</span> <span class="st">&quot;HC1&quot;</span>)</span></code></pre></div>
+<pre><code>## Parameter                 | Coefficient |   SE |        95% CI | Statistic |  df |     p
+## ----------------------------------------------------------------------------------------
+## (Intercept)               |        1.29 | 0.58 | [ 0.14, 2.45] |      2.21 | 157 | 0.028
+## L(ts(GDPGrowth.train))    |        0.21 | 0.09 | [ 0.04, 0.39] |      2.43 | 157 | 0.016
+## L(ts(GDPGrowth.train), 2) |        0.16 | 0.09 | [-0.02, 0.34] |      1.79 | 157 | 0.076
+## L(ts(term.spread.train))  |        0.66 | 0.24 | [ 0.19, 1.13] |      2.76 | 157 | 0.006</code></pre>
+</section><section id="step-ahead-adl21-forecast-of-us-gdp-growth" class="slide level2">
+<h2>1-step ahead ADL(2,1)-forecast of US GDP growth</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Produce one-step ahead forecast of GDP growth for 2003:Q1</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>fcast.ADL21 &lt;-<span class="st"> </span>ADL21.dynlm<span class="op">$</span>coefficients <span class="op">%*%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, GDPGrowth.train[T], GDPGrowth.train[(T<span class="dv">-1</span>)], term.spread.train[T])</span>
+<span id="cb13-3"><a href="#cb13-3"></a>fcast.ADL21 <span class="co"># Print to console</span></span></code></pre></div>
+<pre><code>##          [,1]
+## [1,] 1.533642</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Forecast error</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>fcast.ADL21.error &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(GDPGrowth[<span class="st">&quot;2003&quot;</span>][<span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span>fcast.ADL21</span>
+<span id="cb15-3"><a href="#cb15-3"></a>fcast.ADL21.error <span class="co"># Print to console</span></span></code></pre></div>
+<pre><code>##           [,1]
+## [1,] 0.4878531</code></pre>
+</section><section id="step-ahead-adl21-forecast-of-us-gdp-growth-1" class="slide level2">
+<h2>1-step ahead ADL(2,1)-forecast of US GDP growth</h2>
+<p><img src="index_files/figure-revealjs/unnamed-chunk-13-1.png" width="70%" /></p>
+</section></section>
+<section><section id="summary" class="title-slide slide level1"><h1>Summary</h1></section><section id="summary-1" class="slide level2">
+<h2>Summary</h2>
+<ul>
+<li><p><span class="math inline">\(ADL\)</span>-models forecast <span class="math inline">\(Y\)</span> using the immediate past values of <span class="math inline">\(Y\)</span> itself as well as past values of other predictors.</p></li>
+<li><p>Univariate autoregression (<span class="math inline">\(AR\)</span>-models) are special cases of the <span class="math inline">\(ADL\)</span>-models.</p></li>
+<li><p>ADL-models can be estimated by OLS (see pre-recorded video for assumptions required for consistent estimation)</p></li>
+<li><p>We can estimate <span class="math inline">\(ADL\)</span>-models in R and use them for forecasting</p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="index_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="index_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'none', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'index_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+          { src: 'index_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
